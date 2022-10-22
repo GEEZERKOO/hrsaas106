@@ -1,7 +1,13 @@
-// import request from '@/utils/request'
+import request from '@/utils/request'
 
+// 登录接口
 export function login(data) {
-
+  // 返回一个promise对象
+  return request({
+    url: '/sys/login',
+    method: 'POST',
+    data
+  })
 }
 
 export function getInfo(token) {
@@ -11,3 +17,11 @@ export function getInfo(token) {
 export function logout() {
 
 }
+
+// export const login = data => {
+//     return request({
+//         method: 'POST',
+//         url: '/v1_0/authorizations',
+//         data
+//     })
+// }
