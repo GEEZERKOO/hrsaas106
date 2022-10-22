@@ -35,6 +35,18 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
+    },
+    // 配置反向代理
+    Proxy: {
+      // 当地址中出现/api 的时候触发代理机制
+      '/api': {
+        targt: 'http://ihrm-java.itheima.net/', // 跨域请求的地址
+        changeOrigin: true // 是否跨域 当值为true的时候才表示开启跨域
+        // 重写路由 地址不需要api的时候
+        // pathRewrite: {
+        //   '^/api': ''
+        // }
+      }
     }
   },
   configureWebpack: {
@@ -86,7 +98,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()
