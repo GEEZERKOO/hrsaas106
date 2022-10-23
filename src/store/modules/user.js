@@ -18,11 +18,9 @@ const mutations = {
 // 执行异步
 const actions = {
   async login(context, data) {
-    const result = await login(data)
-    if (result.data.success) {
-      // actions修改status 必须通过mutations
-      context.commit('setToken', result.data.data)
-    }
+    // 调用api接口
+    const result = await login(data) // 拿到token
+    context.commit('setToken', result) // 设置token
   }
 }
 
