@@ -2,7 +2,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { login } from '@/api/user'
 // 状态
 const state = {
-  token: getToken // 从缓存中获取数据 设置token初始状态
+  token: getToken() // 从缓存中获取数据 设置token初始状态
 }
 // 修改状态
 const mutations = {

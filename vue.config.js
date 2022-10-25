@@ -41,6 +41,9 @@ module.exports = {
       // 当地址中出现/api 的时候触发代理机制
       '/api': {
         target: 'http://ihrm-java.itheima.net/', // 跨域请求的地址
+        // 备用接口地址
+        // target:'http://ihrm.itheima.net/'
+
         changeOrigin: true // 是否跨域 当值为true的时候才表示开启跨域
         // 重写路由 地址不需要api的时候
         // pathRewrite: {
