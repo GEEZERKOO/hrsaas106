@@ -11,6 +11,7 @@ const mutations = {
     state.token = token
     setToken() // 同步到缓存
   },
+  // 删除token
   removeToken(state) {
     state.token = null // 删除vuex的token
     removeToken() // 同步到缓存
@@ -40,6 +41,13 @@ const actions = {
     const baseResult = { ...result, ...baseInfo }
     context.commit('setUserInfo', baseResult) // 提交给mutations
     return baseResult
+  },
+  // 退出登录
+  logout(context) {
+    // 删除token
+    context.commit('removeToken')
+    // 删除用户资料
+    context.commit('removeUserInfo')
   }
 }
 
