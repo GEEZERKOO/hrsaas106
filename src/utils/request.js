@@ -7,6 +7,7 @@ const service = axios.create({
 })
 // 请求拦截器
 service.interceptors.request.use()
+
 // 响应拦截器
 service.interceptors.response.use(response => {
   // 结构数据 axios默认封装了一层data
