@@ -41,7 +41,14 @@ service.interceptors.response.use(response => {
     return Promise.reject(new Error(message)) // 返回执行错误 让当前执行链跳出成功 直接进入catch
   }
 }, error => {
-  Message.error(error.message) // 提示错误信息
+  // error信息里面有response对象
+  if (error.response && error.response.data && error.response.data.code === 10002) {
+    // 当等于10002的时候 表示后端提示token超时
+    store.dispatch('user/logout') // 登出action
+    router.push('./login') // 跳转到登录页
+  } else {
+    Message.error(error.message) // 提示错误信息
+  }
   return Promise.reject(error) // 返回执行错误 让当前执行链跳出成功 直接进入catch
 })
 
