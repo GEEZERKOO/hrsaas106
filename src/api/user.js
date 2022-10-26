@@ -11,7 +11,7 @@ export function login(data) {
 }
 
 // 获取用户资料接口
-export function getUserInfo(token) {
+export function getUserInfo() {
   return request({
     url: '/sys/profile',
     method: 'POST'

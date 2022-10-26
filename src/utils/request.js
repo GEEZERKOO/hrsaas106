@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '@/store'
 import { Message } from 'element-ui'
 const service = axios.create({
   // 当执行dev的时候 => 。env.development => /api => 跨域代理
@@ -6,7 +7,16 @@ const service = axios.create({
   timeout: 5000 // 超时时间
 })
 // 请求拦截器
-service.interceptors.request.use()
+service.interceptors.request.use(config => {
+  // config是请求的配置信息
+  if (store.getters.token) {
+    // 注入token
+    config.headers['Authorization'] = `Bearer ${store.getters.token}`
+  }
+  return config // 是必须要返回的
+}, error => {
+  return Promise.reject(error)
+})
 
 // 响应拦截器
 service.interceptors.response.use(response => {
