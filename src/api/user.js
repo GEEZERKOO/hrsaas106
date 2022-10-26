@@ -18,6 +18,13 @@ export function getUserInfo() {
   })
 }
 
+// 根据用户id获取用户的详情
+export function getUserDetailById(id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}
+
 export function logout() {
 
 }
