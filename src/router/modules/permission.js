@@ -8,7 +8,8 @@ export default {
     path: '', // 这里为空表示/permission不但有layout 还有二级路由员工主页↓
     component: () => import('@/views/permission'),
     meta: { // 路由元信息，存储内容的地方，可存储任何数据
-      title: '权限管理' // 左侧导航读取了title属性
+      title: '权限管理', // 左侧导航读取了title属性
+      icon: 'lock'
     }
   }]
 }
