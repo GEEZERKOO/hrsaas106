@@ -18,6 +18,7 @@
           <tree-tools
             slot-scope="{ data }"
             :tree-node="data"
+            @delDepts="getDepartments"
           />
         </el-tree>
       </el-card>
