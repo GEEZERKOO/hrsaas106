@@ -7,6 +7,7 @@
         <tree-tools
           :tree-node="company"
           :is-root="true"
+          @addDepts="addDepts"
         />
         <!-- 放置一个el-tree -->
         <el-tree
@@ -19,20 +20,25 @@
             slot-scope="{ data }"
             :tree-node="data"
             @delDepts="getDepartments"
+            @addDepts="addDepts"
           />
         </el-tree>
       </el-card>
     </div>
+    <!-- 放置新增弹层 -->
+    <AddDept :show-dialog="showDialog" />
   </div>
 </template>
 
 <script>
 import TreeTools from './components/tree-tools'
+import AddDept from './components/add-dept'
 import { getDepartments } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
 export default {
   components: {
-    TreeTools
+    TreeTools,
+    AddDept
   },
   data() {
     return {
@@ -40,7 +46,9 @@ export default {
       departs: [],
       defalutProps: {
         label: 'name' // 表示从这个属性显示内容
-      }
+      },
+      showDialog: false, // 弹窗默认不显示
+      node: null // 记录当前点击的node节点
     }
   },
   created() {
@@ -52,6 +60,12 @@ export default {
       this.company = { name: result.companyName, manager: '负责人' }
       this.departs = tranListToTreeData(result.depts, '')
       console.log(result)
+    },
+
+    // 监听tree-tools中触发的添加部门的事件
+    addDepts(node) {
+      this.showDialog = true // 显示弹层
+      this.node = node // 因为node是当前点击的部门 所以要记录下来
     }
   }
 }

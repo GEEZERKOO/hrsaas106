@@ -61,6 +61,8 @@ export default {
     operateDepts(type) {
       if (type === 'add') {
         // 添加子部门
+        // 添加子部门 是在当前点击的部门下进行操作 this.treeNode就是点击的那个
+        this.$emit('addDepts', this.treeNode) // 触发自定义事件 告诉父组件显示弹层
       } else if (type === 'edit') {
         // 编辑部门
       } else {
