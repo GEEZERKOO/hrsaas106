@@ -3,9 +3,11 @@
   <el-dialog
     title="新增部门"
     :visible="showDialog"
+    @close="btnCancel"
   >
     <!-- 表单弹层 label-width设置标题的宽度 -->
     <el-form
+      ref="deptForm"
       :model="formData"
       :rules="rules"
       label-width="120px"
@@ -38,7 +40,15 @@
           v-model="formData.manager"
           style="width:80%"
           placeholder="请选择"
-        />
+          @focus="getEmployeesSimple"
+        >
+          <el-option
+            v-for="item in peoples"
+            :key="item.id"
+            :label="item.username"
+            :value="item.username"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item
         label="部门介绍"
@@ -60,10 +70,11 @@
       justify="center"
     >
       <el-col :span="6">
-        <el-button size="small">取消</el-button>
+        <el-button size="small" @click="btnCancel">取消</el-button>
         <el-button
           type="primary"
           size="small"
+          @click="btnOK"
         >确定</el-button>
       </el-col>
     </el-row>
@@ -71,7 +82,8 @@
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { getDepartments, addDepartments } from '@/api/departments'
+import { getEmployeesSimple } from '@/api/employees'
 export default {
   props: {
     showDialog: {
@@ -119,7 +131,35 @@ export default {
         manager: [{ required: true, message: '部门负责人不能为空', trigger: 'blur' }],
         introduce: [{ required: true, message: '部门介绍不能为空', trigger: 'blur' },
           { min: 1, max: 300, message: '部门名称介绍为1-300个字符', trigger: 'blur' }]
-      } // 校验规则 {key：数组}
+      }, // 校验规则 {key：数组}
+      peoples: [] // 负责人数据
+    }
+  },
+  methods: {
+    // 获取员工简单列表数据
+    async getEmployeesSimple() {
+      this.peoples = await getEmployeesSimple()
+    },
+
+    // 点击确定时触发
+    btnOK() {
+      this.$refs.deptForm.validate(async isOK => {
+        if (isOK) {
+          // 表示可以提交了
+          // 调用新增接口 添加部门id pid等于父级部门的id
+          await addDepartments({ ...this.formData, pid: this.treeNode.id })
+
+          // 通知父组件重新获取数据
+          this.$emit('addDepts')
+
+          // 关闭弹层
+          this.$emit('update:showDialog', false)
+        }
+      })
+    },
+    btnCancel() {
+      this.$refs.resetFields() // 重置校验字段
+      this.$emit('update:showDialog', false) // 关闭弹层
     }
   }
 }

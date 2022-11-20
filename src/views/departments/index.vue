@@ -27,8 +27,9 @@
     </div>
     <!-- 放置新增弹层 -->
     <AddDept
-      :show-dialog="showDialog"
+      :show-dialog.sync="showDialog"
       :tree-node="node"
+      @addDepts="getDepartments"
     />
   </div>
 </template>
