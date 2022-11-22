@@ -1,7 +1,7 @@
 <template>
   <!-- 新增部门的弹层 -->
   <el-dialog
-    title="新增部门"
+    :title="showTitle"
     :visible="showDialog"
     @close="btnCancel"
   >
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { getDepartments, addDepartments } from '@/api/departments'
+import { getDepartments, addDepartments, getDepartDetali, updateDepartments } from '@/api/departments'
 import { getEmployeesSimple } from '@/api/employees'
 export default {
   props: {
@@ -100,16 +100,32 @@ export default {
     const checkNameRepeat = async(rules, value, callback) => {
       // 获取最新的数据
       const { depts } = await getDepartments()
-      const isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
+      // 检查重复规则 需要新增和编辑两种模式
+
+      let isRepeat = false
+      if (this.formData.id) {
+        // 有id就是编辑模式
+        isRepeat = depts.filter(item => item.pid === this.treeNode.pid && item.id !== this.treeNode.id).some(item => item.name === value)
+      } else {
+        // 没id就是新增模式
+        isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
+      }
       isRepeat ? callback(new Error(`同级目录下已经存在${value}这个部门`)) : callback()
     }
 
     // 定义函数检查编码重复
     const checkCodeRepeat = async(rules, value, callback) => {
       const { depts } = await getDepartments()
+      let isRepeat = false
+      if (this.formData.id) {
+        // 编辑模式下
+        isRepeat = depts.filter(item => item.id !== this.treeNode.id).some(item => item.code === value && value)
+      } else {
+        // 新增模式下
+        isRepeat = depts.some(item => item.code === value && value) // 这里加一个value不为空，因为部门有可能没有code
+      }
       // 要求编码和所有的部门编码都不能重复
       // 由于历史数据可能没有code 所有要加一个强制性条件 value不能为空
-      const isRepeat = depts.some(item => item.code === value && value) // 这里加一个value不为空，因为部门有可能没有code
       isRepeat ? callback(new Error(`组织架构中已经有部门使用${value}编码`)) : callback()
     }
     return {
@@ -135,30 +151,56 @@ export default {
       peoples: [] // 负责人数据
     }
   },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '添加子部门'
+    }
+  },
   methods: {
     // 获取员工简单列表数据
     async getEmployeesSimple() {
       this.peoples = await getEmployeesSimple()
     },
 
+    // 获取部门信息详情
+    async getDepartDetali(id) {
+      this.formData = await getDepartDetali(id)
+    },
+
     // 点击确定时触发
     btnOK() {
       this.$refs.deptForm.validate(async isOK => {
         if (isOK) {
-          // 表示可以提交了
-          // 调用新增接口 添加部门id pid等于父级部门的id
-          await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          // 判断是编辑还是新增模式
+          if (this.formData.id) {
+            // 编辑模式下调用编辑接口
+            await updateDepartments(this.formData)
+          } else {
+            // 新增模式
+            // 调用新增接口 添加部门id pid等于父级部门的id
+            await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          }
 
+          // 表示可以提交了
           // 通知父组件重新获取数据
           this.$emit('addDepts')
 
-          // 关闭弹层
+          // 关闭弹层  update: props名称  值 父组件用sync修饰符
           this.$emit('update:showDialog', false)
         }
       })
     },
+
+    // 点击取消时触发
     btnCancel() {
-      this.$refs.resetFields() // 重置校验字段
+      // 重置数据，因为resetFields只能重置表单上的数据 非表单的数据 比如编辑中id不能重置
+      this.formData = {
+        name: '',
+        code: '',
+        manager: '',
+        introduce: ''
+      }
+      this.$refs.deptForm.resetFields() // 重置校验字段（只能重置定义在data中的数据）
       this.$emit('update:showDialog', false) // 关闭弹层
     }
   }

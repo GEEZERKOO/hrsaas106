@@ -21,12 +21,14 @@
             :tree-node="data"
             @delDepts="getDepartments"
             @addDepts="addDepts"
+            @editDepts="editDepts"
           />
         </el-tree>
       </el-card>
     </div>
     <!-- 放置新增弹层 -->
     <AddDept
+      ref="addDept"
       :show-dialog.sync="showDialog"
       :tree-node="node"
       @addDepts="getDepartments"
@@ -70,6 +72,13 @@ export default {
     addDepts(node) {
       this.showDialog = true // 显示弹层
       this.node = node // 因为node是当前点击的部门 所以要记录下来
+    },
+
+    // 监听tree-tools中触发的编辑部门的事件
+    editDepts(node) {
+      this.showDialog = true // 打开弹层
+      this.node = node // 记录部门
+      this.$refs.addDept.getDepartDetali(node.id) // 直接调用子组件的方法 传入一个id
     }
   }
 }
