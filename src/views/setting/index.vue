@@ -3,9 +3,9 @@
     <div class="app-container">
       <el-card>
         <el-tabs>
-          <!-- 放置页签 -->
+          <!-- 放置内容 -->
           <el-tab-pane label="角色管理">
-            <!-- 新增角色按钮 -->
+            <!-- 左侧内容 -->
             <el-row style="height:60px">
               <el-button
                 icon="el-icon-plus"
@@ -14,18 +14,32 @@
               >新增角色</el-button>
             </el-row>
 
-            <!-- 表格 -->
-            <el-table border="">
+            <!-- 表格 绑定数据 -->
+            <el-table
+              border=""
+              :data="list"
+            >
               <el-table-column
+                align="center"
+                type="index"
                 label="序号"
                 width="120"
               />
               <el-table-column
+                align="center"
+                prop="name"
                 label="角色名称"
                 width="240"
               />
-              <el-table-column label="描述" />
-              <el-table-column label="操作">
+              <el-table-column
+                align="center"
+                prop="description"
+                label="描述"
+              />
+              <el-table-column
+                align="center"
+                label="操作"
+              >
                 <el-button
                   size="small"
                   type="success"
@@ -49,7 +63,13 @@
               style="height: 60px"
             >
               <!-- 分页组件 -->
-              <el-pagination layout="prev,pager,next" />
+              <el-pagination
+                :current-change="page.page"
+                :page-size="page.pagesize"
+                :total="page.total"
+                layout="prev,pager,next"
+                @current-change="changePage"
+              />
             </el-row>
 
           </el-tab-pane>
@@ -68,24 +88,28 @@
             >
               <el-form-item label="公司名称">
                 <el-input
+                  v-model="formData.name"
                   disabled
                   style="width:400px"
                 />
               </el-form-item>
               <el-form-item label="公司地址">
                 <el-input
+                  v-model="formData.companyAddress"
                   disabled
                   style="width:400px"
                 />
               </el-form-item>
               <el-form-item label="邮箱">
                 <el-input
+                  v-model="formData.mailbox"
                   disabled
                   style="width:400px"
                 />
               </el-form-item>
               <el-form-item label="备注">
                 <el-input
+                  v-model="formData.remarks"
                   type="textarea"
                   :rows="3"
                   disabled
@@ -100,3 +124,53 @@
     </div>
   </div>
 </template>
+<script>
+import { getRoleList, getCompanyInfo } from '@/api/setting'
+import { mapGetters } from 'vuex'
+export default {
+  data() {
+    return {
+      list: [], // 承接数据
+      page: {
+        page: 1,
+        pagesize: 10,
+        total: 0 // 记录总数
+      },
+      formData: {
+        // 承接公司信息
+      }
+    }
+  },
+
+  computed: {
+    ...mapGetters(['companyId']) // 拿到公司id
+  },
+
+  created() {
+    this.getRoleList() // 获取列表
+    this.getCompanyInfo() // 获取企业信息
+  },
+
+  methods: {
+    async getRoleList() {
+      const { total, rows } = await getRoleList(this.page)
+      this.page.total = total
+      this.list = rows
+    },
+
+    // 获取公司信息
+    async getCompanyInfo() {
+      this.formData = await getCompanyInfo(this.companyId)
+    },
+
+    changePage(newPage) {
+      // newPage是当前点击的页码
+      this.page.page = newPage // 将当前页码赋值给当前的最新页码
+      this.getRoleList()
+    }
+  }
+}
+</script>
+
+<style>
+</style>
