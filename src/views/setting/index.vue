@@ -11,6 +11,7 @@
                 icon="el-icon-plus"
                 size="small"
                 type="primary"
+                @click="showDialog = true"
               >新增角色</el-button>
             </el-row>
 
@@ -130,6 +131,7 @@
       <el-dialog
         title="编辑部门"
         :visible="showDialog"
+        @close="btnCancel"
       >
         <el-form
           ref="roleForm"
@@ -154,7 +156,7 @@
             <el-col :span="8">
               <el-button
                 size="small"
-                @click="btnCencel"
+                @click="btnCancel"
               >取消</el-button>
               <el-button
                 type="primary"
@@ -169,7 +171,7 @@
   </div>
 </template>
 <script>
-import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -248,15 +250,26 @@ export default {
         if (this.roleForm.id) {
           // 编辑
           await updateRole(this.roleForm)
-          await this.getRoleList() // 重新加载数据
-          this.$message.success('操作成功')
-          this.showDialog = false
         } else {
           // 新增
+          addRole(this.roleForm)
         }
+        this.getRoleList() // 重新加载数据
+        this.$message.success('操作成功')
+        this.showDialog = false
       } catch (error) {
         console.log(error)
       }
+    },
+
+    btnCancel() {
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      // 移除校验规则
+      this.$refs.roleForm.resetFields()
+      this.showDialog = false
     }
   }
 }
