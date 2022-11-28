@@ -13,6 +13,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import * as directives from '@/directives'
+import * as filters from '@/filters' // 引用工具类
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -24,6 +25,11 @@ Vue.use(ElementUI, { locale })
 
 Object.keys(directives).forEach(key => {
   Vue.directive(key, directives[key]) // 注册自定义指令
+})
+
+// 注册全局过滤器
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
 })
 
 // 注册自定义事件

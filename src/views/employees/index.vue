@@ -4,7 +4,7 @@
       <page-tools :show-before="true">
         <!-- 左侧显示记录 -->
         <template #before>
-          <span>共16条记录</span>
+          <span>共{{ page.total }}条记录</span>
         </template>
         <!-- 右侧显示按钮 excel导入 导出 新增员工 -->
         <template #after>
@@ -48,6 +48,7 @@
             label="聘用形式"
             sortable=""
             prop="formOfEmployment"
+            :formatter="formatEmployment"
           />
           <el-table-column
             label="部门"
@@ -58,12 +59,18 @@
             label="入职时间"
             sortable=""
             prop="timeOfEntry"
-          />
+          >
+            <template v-slot="{ row }">{{ row.timeOfEntry | formatDate }}</template>
+          </el-table-column>
           <el-table-column
             label="账户状态"
             sortable=""
             prop="enableState"
-          />
+          >
+            <template v-slot="{row}">
+              <el-switch :value="row.enableState === 1" />
+            </template>
+          </el-table-column>
           <el-table-column
             label="操作"
             sortable=""
@@ -121,6 +128,7 @@
 
 <script>
 import { getEmployeeList } from '@/api/employees'
+import EmployeeEnum from '@/api/constant/employees'
 export default {
   data() {
     return {
@@ -147,6 +155,10 @@ export default {
       this.page.total = total
       this.list = rows
       this.loading = false
+    },
+    formatEmployment(rows, column, cellValue, index) {
+      const obj = EmployeeEnum.hireType.find(item => item.id === cellValue)
+      return obj ? obj.value : '未知'
     }
   }
 }
