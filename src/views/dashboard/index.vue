@@ -14,13 +14,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import PageTools from '@/components/PageTools'
 
 export default {
   name: 'Dashboard',
-  components: {
-    PageTools
-  },
   computed: {
     ...mapGetters([
       'name'

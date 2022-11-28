@@ -7,6 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
 import '@/styles/index.scss' // global css
+import Components from '@/components'
 
 import App from './App'
 import store from './store'
@@ -25,6 +26,8 @@ Object.keys(directives).forEach(key => {
   Vue.directive(key, directives[key]) // 注册自定义指令
 })
 
+// 注册自定义事件
+Vue.use(Components)
 Vue.config.productionTip = false
 
 new Vue({
