@@ -19,6 +19,7 @@
           <el-button
             size="samll"
             type="primary"
+            @click="showDialog = true"
           >新增员工</el-button>
         </template>
       </page-tools>
@@ -124,13 +125,16 @@
         </el-row>
       </el-card>
     </div>
+    <add-employee :show-dialog.sync="showDialog" />
   </div>
 </template>
 
 <script>
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
+import AddEmployee from './components/add-employee'
 export default {
+  components: { AddEmployee },
   data() {
     return {
       loading: false,
@@ -139,7 +143,8 @@ export default {
         page: 1,
         size: 10,
         total: 0
-      }
+      },
+      showDialog: false
     }
   },
   created() {

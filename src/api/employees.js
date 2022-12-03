@@ -25,6 +25,17 @@ export function getEmployeeList(params) {
 export function delEmployee(id) {
   return request({
     url: `/sys/user/${id}`,
-    methods: 'delete'
+    method: 'delete'
+  })
+}
+
+/* ***
+*   新增员工
+* ***/
+export function addEmployee(data) {
+  return request({
+    url: '/sys/user',
+    method: 'post',
+    data
   })
 }
