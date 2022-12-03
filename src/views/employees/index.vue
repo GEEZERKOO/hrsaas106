@@ -77,7 +77,7 @@
             fixed="right"
             width="280"
           >
-            <template>
+            <template slot-scope="{ row }">
               <el-button
                 type="text"
                 size="small"
@@ -101,6 +101,7 @@
               <el-button
                 type="text"
                 size="small"
+                @click="delEmployee(row.id)"
               >删除</el-button>
             </template>
           </el-table-column>
@@ -127,7 +128,7 @@
 </template>
 
 <script>
-import { getEmployeeList } from '@/api/employees'
+import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 export default {
   data() {
@@ -149,6 +150,7 @@ export default {
       this.page.page = newPage
       this.getEmployeeList()
     },
+
     async getEmployeeList() {
       this.loading = true
       const { total, rows } = await getEmployeeList(this.page)
@@ -156,9 +158,21 @@ export default {
       this.list = rows
       this.loading = false
     },
+
     formatEmployment(rows, column, cellValue, index) {
       const obj = EmployeeEnum.hireType.find(item => item.id === cellValue)
       return obj ? obj.value : '未知'
+    },
+
+    async delEmployee(id) {
+      try {
+        await this.$confirm('确定删除该员工吗?')
+        await delEmployee(id)
+        this.$message.success('删除员工成功')
+        this.getEmployeeList()
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
