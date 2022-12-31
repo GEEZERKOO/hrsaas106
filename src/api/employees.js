@@ -50,3 +50,14 @@ export function importEmployee(data) {
     data
   })
 }
+
+/* ***
+*   导入员工
+* ***/
+export function saveUserDetailById(data) {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'put',
+    data
+  })
+}

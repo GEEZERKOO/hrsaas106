@@ -11,5 +11,12 @@ export default {
       title: '员工管理', // 左侧导航读取了title属性
       icon: 'people'
     }
+  }, {
+    path: 'detail/:id', // 动态参数路由 需要id才能访问 若想不用id也能访问就加个?
+    component: () => import('@/views/employees/detail'),
+    hidden: true,
+    meta: {
+      title: '员工详情'
+    }
   }]
 }
